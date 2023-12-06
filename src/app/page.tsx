@@ -27,5 +27,8 @@ const createRandomRoom = async () => {
 
 export default async function Home() {
   const roomId = await createRandomRoom();
+
+  console.log({roomId});
+  
   return <IntroPage roomId={roomId} />;
 }

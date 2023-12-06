@@ -1,26 +1,36 @@
-import { NestedBasicIcons } from "@/assets/BasicIcons";
-import React from "react";
-import Button from "../common/Button";
-import useStore from "@/store/slices";
-import { useHuddle01, usePeers } from "@huddle01/react/hooks";
-import { useAppUtils } from "@huddle01/react/app-utils";
+import { NestedBasicIcons } from '@/assets/BasicIcons';
+import React from 'react';
+import Button from '../common/Button';
+import useStore from '@/store/slices';
+import {
+  useDataMessage,
+  useHuddle01,
+  useLocalPeer,
+  usePeerIds,
+} from '@huddle01/react/hooks';
+import { Role } from '@huddle01/server-sdk/auth';
 
 type RequestToSpeakProps = {};
 
 const RequestToSpeak: React.FC<RequestToSpeakProps> = () => {
   const setPromptView = useStore((state) => state.setPromptView);
 
-  const { me } = useHuddle01();
-  const { sendData } = useAppUtils();
+  const { peerId } = useLocalPeer();
+  const { sendData } = useDataMessage();
 
-  const { peers } = usePeers();
+  const { peerIds } = usePeerIds({
+    roles: [Role.HOST, Role.CO_HOST, Role.SPEAKER],
+  });
 
   const sendSpeakerRequest = () => {
-    const peerIds = Object.values(peers).filter(({role}) => (role === "host" || role === "coHost")).map(({peerId}) => peerId);
-    sendData(peerIds, {
-      "request-to-speak": me.meId
+    sendData({
+      to: peerIds,
+      payload: JSON.stringify({
+        peerId,
+      }),
+      label: 'requestToSpeak',
     });
-    setPromptView("close");
+    setPromptView('close');
   };
 
   return (
@@ -39,7 +49,7 @@ const RequestToSpeak: React.FC<RequestToSpeakProps> = () => {
         <Button
           type="button"
           className="bg-custom-3 w-36 text-custom-6"
-          onClick={() => setPromptView("close")}
+          onClick={() => setPromptView('close')}
         >
           Cancel
         </Button>

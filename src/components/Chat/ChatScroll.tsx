@@ -1,7 +1,7 @@
 import React from 'react';
 
-function useChatScroll(dep) {
-  const ref = React.useRef(null);
+function useChatScroll(dep: any) {
+  const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (ref.current) {

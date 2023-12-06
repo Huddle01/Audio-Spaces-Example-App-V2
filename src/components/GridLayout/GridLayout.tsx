@@ -1,65 +1,31 @@
-import { Peer } from "@/utils/types";
-import GridCard from "./GridCard/GridCard";
-import { useHuddle01, usePeers } from "@huddle01/react/hooks";
-import { useEffect } from "react";
-import Audio from "../common/Audio";
+import { useLocalPeer, usePeerIds } from '@huddle01/react/hooks';
+import { Role } from '@huddle01/server-sdk/auth';
+import CoHosts from './ViewPorts/CoHosts';
+import Hosts from './ViewPorts/Hosts';
+import Speakers from './ViewPorts/Speakers';
+import Listeners from './ViewPorts/Listeners';
 
 type GridLayoutProps = {};
 
 const GridLayout: React.FC<GridLayoutProps> = () => {
-  const Blacklist = ["peer", "listener"];
-
-  const { peers } = usePeers();
-  const { me } = useHuddle01();
+  const { peerIds } = usePeerIds({ roles: [Role.LISTENER] });
+  const { role: localPeerRole } = useLocalPeer();
 
   return (
     <div className="w-full h-full ml-10 flex items-center justify-center flex-col py-20">
       <div className="flex-wrap flex items-center justify-center gap-4 w-full">
-        {!Blacklist.includes(me.role) && (
-          <GridCard
-            displayName={me.displayName}
-            peerId={me.meId}
-            role={me.role}
-            avatarUrl={me.avatarUrl}
-          />
-        )}
-        {Object.values(peers)
-          .filter((peer) => ["host", "coHost", "speaker"].includes(peer.role))
-          .map(({ displayName, peerId, role, avatarUrl, mic }) => (
-            <GridCard
-              key={peerId}
-              displayName={displayName}
-              peerId={peerId}
-              role={role}
-              avatarUrl={avatarUrl}
-              mic={mic}
-            />
-          ))}
+        <Hosts />
+        <CoHosts />
+        <Speakers />
       </div>
       <div className="mt-10">
         <div className="text-custom-6 text-base font-normal text-center mb-5">
-          Listeners - {Object.values(peers).filter(({role}) => role === "listener").length + (me.role == "listener" ? 1 : 0)}
+          Listeners -{' '}
+          {peerIds.length +
+            (localPeerRole && localPeerRole === Role.LISTENER ? 1 : 0)}
         </div>
         <div className="flex-wrap flex items-center justify-center gap-4 w-full">
-          {Blacklist.includes(me.role) && (
-            <GridCard
-              displayName={me.displayName}
-              peerId={me.meId}
-              role={me.role}
-              avatarUrl={me.avatarUrl}
-            />
-          )}
-          {Object.values(peers)
-            .filter((peer) => Blacklist.includes(peer.role))
-            .map(({ displayName, peerId, role, avatarUrl }, i) => (
-              <GridCard
-                key={peerId}
-                displayName={displayName}
-                peerId={peerId}
-                role={role}
-                avatarUrl={avatarUrl}
-              />
-            ))}
+          <Listeners />
         </div>
       </div>
     </div>

@@ -11,35 +11,27 @@ import Dropdown from '../common/Dropdown';
 import EmojiTray from '../EmojiTray/EmojiTray';
 import { useRouter } from 'next/navigation';
 import {
-  useAudio,
-  useHuddle01,
-  usePeers,
+  useLocalPeer,
+  useLocalAudio,
+  usePeerIds,
   useRoom,
-  useRecording,
 } from '@huddle01/react/hooks';
-import { useEventListener } from '@huddle01/react/hooks';
 
 type BottomBarProps = {};
 
 const BottomBar: React.FC<BottomBarProps> = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const { peers } = usePeers();
+  const { peerIds } = usePeerIds();
 
   const { push } = useRouter();
 
-  const { leaveRoom, endRoom } = useRoom();
+  const { leaveRoom, closeRoom } = useRoom();
 
-  const {
-    fetchAudioStream,
-    produceAudio,
-    stopAudioStream,
-    stopProducingAudio,
-  } = useAudio();
+  const { enableAudio, disableAudio, isAudioOn } = useLocalAudio();
 
   const sidebarView = useStore((state) => state.sidebar.sidebarView);
-  // const chatView = useStore((state) => state.chatView);
-  // const setChatView = useStore((state) => state.setChatView);
+
   const isChatOpen = useStore((state) => state.isChatOpen);
   const setIsChatOpen = useStore((state) => state.setIsChatOpen);
 
@@ -47,30 +39,16 @@ const BottomBar: React.FC<BottomBarProps> = () => {
 
   const setPromptView = useStore((state) => state.setPromptView);
 
-  const [isAudioOn, setIsAudioOn] = useState<boolean>(false);
+  const { role, metadata, updateRole, peerId: localPeerId } = useLocalPeer();
 
   const [showLeaveDropDown, setShowLeaveDropDown] = useState<boolean>(false);
-
-  const { me } = useHuddle01();
-
-  useEventListener('app:mic-on', (stream) => {
-    setIsAudioOn(true);
-    if (stream) produceAudio(stream);
-  });
-
-  useEventListener('app:mic-off', () => {
-    setIsAudioOn(false);
-    stopProducingAudio();
-  });
 
   return (
     <div className="absolute bottom-6 w-full flex items-center px-10 justify-between">
       {/* Bottom Bar Left */}
       <div>
-        {me.role == 'host' || me.role == 'coHost' || me.role == 'speaker' ? (
-          <div className="mr-auto flex items-center justify-between gap-3 w-44">
-            {''}
-          </div>
+        {role === 'host' || role === 'coHost' || role === 'speaker' ? (
+          <div className="mr-auto flex items-center justify-between gap-3 w-44"></div>
         ) : (
           <OutlineButton
             className="mr-auto flex items-center justify-between gap-3"
@@ -84,11 +62,11 @@ const BottomBar: React.FC<BottomBarProps> = () => {
 
       {/* Bottom Bar Center */}
       <div className="flex items-center gap-4">
-        {me.role !== 'listener' &&
+        {role !== 'listener' &&
           (!isAudioOn ? (
             <button
               onClick={() => {
-                fetchAudioStream();
+                enableAudio();
               }}
             >
               {NestedBasicIcons.inactive.mic}
@@ -96,7 +74,7 @@ const BottomBar: React.FC<BottomBarProps> = () => {
           ) : (
             <button
               onClick={() => {
-                stopAudioStream();
+                disableAudio();
               }}
             >
               {NestedBasicIcons.active.mic}
@@ -117,13 +95,13 @@ const BottomBar: React.FC<BottomBarProps> = () => {
           open={showLeaveDropDown}
           onOpenChange={() => setShowLeaveDropDown((prev) => !prev)}
         >
-          {me.role === 'host' && (
+          {role === 'host' && (
             <Strip
               type="close"
               title="End spaces for all"
               variant="danger"
               onClick={() => {
-                endRoom();
+                closeRoom();
               }}
             />
           )}
@@ -142,19 +120,27 @@ const BottomBar: React.FC<BottomBarProps> = () => {
 
         <OutlineButton
           className="ml-auto flex items-center gap-3"
-          onClick={() =>
-            setSidebarView(sidebarView === 'peers' ? 'close' : 'peers')
-          }
+          onClick={() => {
+            setSidebarView(sidebarView === 'peers' ? 'close' : 'peers');
+            if (isChatOpen) {
+              setIsChatOpen(false);
+            }
+          }}
         >
           {BasicIcons.peers}
           <span>
-            {Object.keys(peers).filter((peerId) => peerId !== me.meId).length +
-              1}
+            {Object.keys(peerIds).filter((peerId) => peerId !== localPeerId)
+              .length + 1}
           </span>
         </OutlineButton>
         <OutlineButton
           className="ml-auto flex items-center gap-3"
-          onClick={() => setIsChatOpen(!isChatOpen)}
+          onClick={() => {
+            setIsChatOpen(!isChatOpen);
+            if (sidebarView !== 'close') {
+              setSidebarView('close');
+            }
+          }}
         >
           {BasicIcons.chat}
         </OutlineButton>

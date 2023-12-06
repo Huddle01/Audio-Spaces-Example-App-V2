@@ -22,6 +22,7 @@ export interface ISidebarState {
   requestedPeers: string[];
   userDisplayName: string;
   chatMessages: IChatMessage[];
+  showAcceptRequest: boolean;
   setPromptView: (val: TPromptView) => void;
   setSidebarView: (val: TSidebarView) => void;
   setAvatarUrl: (va: string) => void;
@@ -32,6 +33,7 @@ export interface ISidebarState {
   removeRequestedPeers: (val: string) => void;
   setUserDisplayName: (val: string) => void;
   setIsChatOpen: (val: boolean) => void;
+  setShowAcceptRequest: (val: boolean) => void;
 }
 
 const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
@@ -48,6 +50,7 @@ const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
   requestedPeers: [],
   userDisplayName: '',
   chatMessages: [],
+  showAcceptRequest: false,
 
   setIsChatOpen: (chatOpen: boolean) => {
     set(() => ({
@@ -130,6 +133,12 @@ const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
       userDisplayName: val,
     }));
   },
+
+  setShowAcceptRequest: (val: boolean) => {
+    set(() => ({
+      showAcceptRequest: val,
+    }));
+  }
 });
 
 export default createHandlerSlice;

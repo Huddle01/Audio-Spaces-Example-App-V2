@@ -1,15 +1,17 @@
 import React from "react";
 import Strip from "./Strip";
-import { useAcl, useRoom, useHuddle01 } from "@huddle01/react/hooks";
+import { useRoom, useHuddle01, useRemotePeer, useLocalPeer } from "@huddle01/react/hooks";
+import { Role } from "@huddle01/server-sdk/auth";
 
 type CoHostDataProps = {
   peerId: string;
 };
 
 const CoHostData: React.FC<CoHostDataProps> = ({ peerId }) => {
-  const { changePeerRole, kickPeer } = useAcl();
+  
+  const { updateRole } = useRemotePeer({ peerId });
 
-  const { me } = useHuddle01();
+  const me = useLocalPeer();
 
   const { leaveRoom } = useRoom();
 
@@ -23,7 +25,7 @@ const CoHostData: React.FC<CoHostDataProps> = ({ peerId }) => {
             variant="danger"
             onClick={() => {
               if (me.role === "host" || me.role === "coHost") {
-                changePeerRole(peerId, "listener");
+                updateRole(Role.LISTENER);
               }
             }}
           />
@@ -33,7 +35,7 @@ const CoHostData: React.FC<CoHostDataProps> = ({ peerId }) => {
             variant="danger"
             onClick={() => {
               if (me.role === "host") {
-                kickPeer(peerId);
+                // kickPeer(peerId);
               }
             }}
           />
@@ -52,7 +54,7 @@ const CoHostData: React.FC<CoHostDataProps> = ({ peerId }) => {
             title="Leave co-host role"
             variant="danger"
             onClick={() => {
-              changePeerRole(peerId, "listener");
+              updateRole(Role.LISTENER);
             }}
           />
         </div>

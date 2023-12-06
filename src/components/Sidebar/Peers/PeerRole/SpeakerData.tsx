@@ -1,15 +1,16 @@
 import React from "react";
 import Strip from "./Strip";
-import { useAcl, useHuddle01, useRoom } from "@huddle01/react/hooks";
+import { useLocalPeer, useRemotePeer, useRoom } from "@huddle01/react/hooks";
+import { Role } from "@huddle01/server-sdk/auth";
 
 type SpeakerDataProps = {
   peerId: string;
 };
 
 const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
-  const { changePeerRole, kickPeer } = useAcl();
   const { leaveRoom } = useRoom();
-  const { me } = useHuddle01();
+  const { updateRole } = useRemotePeer({ peerId });
+  const me = useLocalPeer();
 
   return (
     <>
@@ -20,19 +21,19 @@ const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
               title="Invite as Co-Host"
               variant="normal"
               onClick={() => {
-                  changePeerRole(peerId, "coHost");
+                  updateRole(Role.CO_HOST);
               }}
             />
             </div>
             )}
-            {["host", "coHost"].includes(me.role) && (
+            {me.role && ["host", "coHost"].includes(me.role) && (
               <div>
             <Strip
               type="speaker"
               title="Remove as Speaker"
               variant="danger"
               onClick={() => {
-                  changePeerRole(peerId, "listener");
+                  updateRole(Role.LISTENER);
                 }
               }
             />
@@ -41,7 +42,7 @@ const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
               title="Remove from spaces"
               variant="danger"
               onClick={() => {
-                  kickPeer(peerId);
+                  // kickPeer(peerId);
               }}
             />
           </div>
@@ -54,7 +55,7 @@ const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
             title="Leave speaker role"
             variant="danger"
             onClick={() => {
-              changePeerRole(peerId, "listener");
+              updateRole(Role.LISTENER);
             }}
           />
           <Strip

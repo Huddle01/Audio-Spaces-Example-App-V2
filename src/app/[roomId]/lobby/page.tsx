@@ -16,7 +16,15 @@ import AvatarWrapper from '@/components/common/AvatarWrapper';
 import useStore from '@/store/slices';
 
 // Hooks
-import { useHuddle01, useLobby, useRoom } from '@huddle01/react/hooks';
+import {
+  useHuddle01,
+  useLobby,
+  usePeerIds,
+  useRoom,
+} from '@huddle01/react/hooks';
+import { AccessToken, Role } from '@huddle01/server-sdk/auth';
+import { Client } from '@huddle01/server-sdk/client';
+import { headers } from 'next/dist/client/components/headers';
 
 type lobbyProps = {};
 
@@ -27,38 +35,96 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
   const setAvatarUrl = useStore((state) => state.setAvatarUrl);
   const setUserDisplayName = useStore((state) => state.setUserDisplayName);
   const userDisplayName = useStore((state) => state.userDisplayName);
+  const [numberOfPeers, setNumberOfPeers] = useState<number>(0);
+  const [token, setToken] = useState<string>('');
 
   const { push } = useRouter();
 
   // Huddle Hooks
-  const { joinRoom, isRoomJoined } = useRoom();
-  const { initialize, me } = useHuddle01();
-  const { isLobbyJoined, joinLobby, isLoading } = useLobby();
+  const { joinRoom, state, room } = useRoom();
 
   useEffect(() => {
-    if (!isLobbyJoined) {
-      initialize(process.env.NEXT_PUBLIC_PROJECT_ID ?? '');
-      joinLobby(params.roomId);
-      return;
+    if (state !== 'connected') {
+      const getToken = async () => {
+        try {
+          const response = await fetch(
+            `https://gamma.iriko.huddle01.com/api/v1/live-meeting/preview-peers?roomId=${params.roomId}`,
+            {
+              headers: {
+                'x-api-key': process.env.NEXT_PUBLIC_API_KEY ?? '',
+              },
+            }
+          );
+          const data = await response.json();
+          console.log('data', data.previewPeers.length);
+          const accessToken = new AccessToken({
+            apiKey: process.env.NEXT_PUBLIC_API_KEY ?? '',
+            roomId: params.roomId,
+            // role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
+            role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
+            permissions: {
+              admin: true,
+              canConsume: true,
+              canProduce: true,
+              canProduceSources: { cam: true, mic: true, screen: true },
+              canRecvData: true,
+              canSendData: true,
+              canUpdateMetadata: true,
+            },
+          });
+          const userToken = await accessToken.toJwt();
+
+          console.log({ userToken });
+
+          setToken(userToken);
+        } catch (error) {
+          console.log(error);
+          const accessToken = new AccessToken({
+            apiKey: process.env.NEXT_PUBLIC_API_KEY ?? '',
+            roomId: params.roomId,
+            // role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
+            role: Role.HOST,
+            permissions: {
+              admin: true,
+              canConsume: true,
+              canProduce: true,
+              canProduceSources: { cam: true, mic: true, screen: true },
+              canRecvData: true,
+              canSendData: true,
+              canUpdateMetadata: true,
+            },
+          });
+          const userToken = await accessToken.toJwt();
+
+          console.log({ userToken });
+
+          setToken(userToken);
+        }
+      };
+      getToken();
     }
+    console.log('room', room);
   }, []);
 
-  const handleStartSpaces = () => {
-    if (!isLobbyJoined) return;
-
+  const handleStartSpaces = async () => {
     if (!userDisplayName.length) {
       toast.error('Display name is required!');
       return;
     } else {
-      joinRoom();
+      console.log({ token });
+
+      await joinRoom({
+        roomId: params.roomId,
+        token,
+      });
     }
   };
 
   useEffect(() => {
-    if (isRoomJoined) {
+    if (state === 'connected') {
       push(`/${params.roomId}`);
     }
-  }, [isRoomJoined]);
+  }, [state]);
 
   return (
     <main className="flex h-screen flex-col items-center justify-center bg-lobby text-slate-100">
@@ -153,7 +219,7 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
             className="flex items-center justify-center bg-[#246BFD] text-slate-100 rounded-md p-2 mt-2 w-full"
             onClick={handleStartSpaces}
           >
-            {isLoading ? 'Loading...' : 'Start Spaces'}
+            {'Start Spaces'}
             <Image
               alt="narrow-right"
               width={30}

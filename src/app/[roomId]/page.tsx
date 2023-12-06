@@ -7,95 +7,85 @@ import BottomBar from '@/components/BottomBar/BottomBar';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import GridLayout from '@/components/GridLayout/GridLayout';
 import Prompts from '@/components/common/Prompts';
-import { useEventListener, useHuddle01 } from '@huddle01/react/hooks';
-import { useRoom, useAcl } from '@huddle01/react/hooks';
+import {
+  useRoom,
+  useLocalPeer,
+  useLocalAudio,
+  usePeerIds,
+  useHuddle01,
+  useDataMessage,
+} from '@huddle01/react/hooks';
 import { useRouter } from 'next/navigation';
 import AcceptRequest from '@/components/Modals/AcceptRequest';
 import useStore from '@/store/slices';
 import { toast } from 'react-hot-toast';
-import { useAppUtils } from '@huddle01/react/app-utils';
+import { Role } from '@huddle01/server-sdk/auth';
 import Chat from '@/components/Chat/Chat';
+import { metadata } from '../layout';
+// import Chat from '@/components/Chat/Chat';
 
 const Home = ({ params }: { params: { roomId: string } }) => {
-  const { isRoomJoined } = useRoom();
+  const { state } = useRoom({
+    onLeave: () => {
+      push(`/${params.roomId}/lobby`);
+    }
+  });
   const { push } = useRouter();
-  const { changePeerRole } = useAcl();
-  const { me } = useHuddle01();
+  // const { changePeerRole } = useAcl();
   const [requestedPeerId, setRequestedPeerId] = useState('');
-  const [showAcceptRequest, setShowAcceptRequest] = useState(false);
+  const { showAcceptRequest, setShowAcceptRequest } = useStore();
   const addChatMessage = useStore((state) => state.addChatMessage);
   const addRequestedPeers = useStore((state) => state.addRequestedPeers);
   const removeRequestedPeers = useStore((state) => state.removeRequestedPeers);
   const requestedPeers = useStore((state) => state.requestedPeers);
   const avatarUrl = useStore((state) => state.avatarUrl);
   const userDisplayName = useStore((state) => state.userDisplayName);
-  const { changeAvatarUrl, setDisplayName, sendData } = useAppUtils();
   const isChatOpen = useStore((state) => state.isChatOpen);
+  const { updateMetadata, metadata, peerId, role } = useLocalPeer<{
+    displayName: string;
+    avatarUrl: string;
+    isHandRaised: boolean;
+  }>();
+  const { peerIds } = usePeerIds();
 
-  useEventListener('room:peer-joined', ({ peerId, role }) => {
-    if (role === 'peer') {
-      changePeerRole(peerId, 'listener');
-    }
-  });
-
-  useEventListener('room:me-left', () => {
-    push('https://huddle01.com/docs/usecase/audio-spaces');
-  });
+  const { huddleClient } = useHuddle01();
 
   useEffect(() => {
-    if (!isRoomJoined) {
+    if (state === 'idle') {
       push(`/${params.roomId}/lobby`);
       return;
+    } else {
+      console.log('length', peerIds.length);
+      updateMetadata({
+        displayName: userDisplayName,
+        avatarUrl: avatarUrl,
+        isHandRaised: metadata?.isHandRaised || false,
+      });
     }
   }, []);
 
-  useEffect(() => {
-    if (changeAvatarUrl.isCallable) {
-      changeAvatarUrl(avatarUrl);
-    }
-  }, [changeAvatarUrl.isCallable]);
+  useDataMessage({
+    onMessage(payload, from, label) {
+      if (label === 'requestToSpeak') {
+        setShowAcceptRequest(true);
+        setRequestedPeerId(from);
+        addRequestedPeers(from);
+        setTimeout(() => {
+          setShowAcceptRequest(false);
+        }, 5000);
+      }
 
-  useEffect(() => {
-    if (setDisplayName.isCallable) {
-      setDisplayName(userDisplayName);
-    }
-  }, [setDisplayName.isCallable]);
-
-  const sendDataToAllPeers = () => {
-    sendData('*', { message: 'Hello World' });
-  };
-
-  useEventListener('room:me-role-update', (role) => {
-    toast.success(`You are now ${role}`);
+      if (label === 'chat' && from !== peerId ) {
+        const messagePayload = JSON.parse(payload);
+        const newChatMessage = {
+          name: messagePayload.name,
+          text: messagePayload.message,
+          is_user: false,
+        };
+        addChatMessage(newChatMessage);
+      }
+    },
   });
-
-  useEventListener('room:data-received', (data) => {
-    if (data.payload['request-to-speak']) {
-      setShowAcceptRequest(true);
-      setRequestedPeerId(data.payload['request-to-speak']);
-      addRequestedPeers(data.payload['request-to-speak']);
-      setTimeout(() => {
-        setShowAcceptRequest(false);
-      }, 5000);
-    }
-
-    if (data.payload.message && data.fromPeerId !== me.meId) {
-      const newChatMessage = {
-        name: data.payload.name,
-        text: data.payload.message,
-        is_user: false,
-      };
-      addChatMessage(newChatMessage);
-    }
-  });
-
-  const handleAccept = () => {
-    if (me.role == 'host' || me.role == 'coHost') {
-      changePeerRole(requestedPeerId, 'speaker');
-      setShowAcceptRequest(false);
-      removeRequestedPeers(requestedPeerId);
-    }
-  };
 
   useEffect(() => {
     if (!requestedPeers.includes(requestedPeerId)) {
@@ -112,11 +102,6 @@ const Home = ({ params }: { params: { roomId: string } }) => {
           {showAcceptRequest && (
             <AcceptRequest
               peerId={requestedPeerId}
-              onAccept={handleAccept}
-              onDeny={() => {
-                setShowAcceptRequest(false);
-                removeRequestedPeers(requestedPeerId);
-              }}
             />
           )}
         </div>

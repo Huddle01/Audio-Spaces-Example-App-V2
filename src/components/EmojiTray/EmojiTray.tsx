@@ -1,28 +1,29 @@
-import { BasicIcons } from "@/assets/BasicIcons";
-import { cn } from "@/utils/helpers";
-import React, {useEffect, useState} from "react";
-import { useAppUtils } from "@huddle01/react/app-utils";
-import { useHuddle01 } from "@huddle01/react/hooks";
-import useStore from "@/store/slices";
-import { useUpdateEffect } from "usehooks-ts";
+import { BasicIcons } from '@/assets/BasicIcons';
+import { cn } from '@/utils/helpers';
+import React from 'react';
+import {
+  useDataMessage,
+  useLocalPeer,
+} from '@huddle01/react/hooks';
+import useStore from '@/store/slices';
 
 type Reaction =
-  | ""
-  | "😂"
-  | "😢"
-  | "😦"
-  | "😍"
-  | "🤔"
-  | "👀"
-  | "🙌"
-  | "👍"
-  | "👎"
-  | "🔥"
-  | "🍻"
-  | "🚀"
-  | "🎉"
-  | "❤️"
-  | "💯";
+  | ''
+  | '😂'
+  | '😢'
+  | '😦'
+  | '😍'
+  | '🤔'
+  | '👀'
+  | '🙌'
+  | '👍'
+  | '👎'
+  | '🔥'
+  | '🍻'
+  | '🚀'
+  | '🎉'
+  | '❤️'
+  | '💯';
 
 interface Props {
   onClose: () => void;
@@ -30,39 +31,33 @@ interface Props {
 }
 
 const EmojiTray: React.FC<Props> = ({ onClick, onClose }) => {
-  const [isHandRaised, setIsHandRaised] = useState(false);
   // Emoji Data
   const emojis: Reaction[] = [
-    "😂",
-    "😢",
-    "😦",
-    "😍",
-    "🤔",
-    "👀",
-    "🙌",
-    "👍",
-    "👎",
-    "🔥",
-    "🍻",
-    "🚀",
-    "🎉",
-    "❤️",
-    "💯",
+    '😂',
+    '😢',
+    '😦',
+    '😍',
+    '🤔',
+    '👀',
+    '🙌',
+    '👍',
+    '👎',
+    '🔥',
+    '🍻',
+    '🚀',
+    '🎉',
+    '❤️',
+    '💯',
   ];
 
-  const { me } = useHuddle01();
-  const { sendData } = useAppUtils();
-  const setMyHandRaised = useStore((state) => state.setMyHandRaised);
+  const { sendData } = useDataMessage();
   const setMyReaction = useStore((state) => state.setMyReaction);
 
-  useUpdateEffect(() => {
-    sendData(
-      "*", {
-        raiseHand: isHandRaised,
-      }
-    )
-    setMyHandRaised(isHandRaised);
-  }, [isHandRaised])
+  const { metadata, updateMetadata } = useLocalPeer<{
+    displayName: string;
+    avatarUrl: string;
+    isHandRaised: boolean;
+  }>();
 
   return (
     <div>
@@ -83,25 +78,29 @@ const EmojiTray: React.FC<Props> = ({ onClick, onClose }) => {
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            setIsHandRaised((prev) => !prev);
+            updateMetadata({
+              displayName: metadata?.displayName ?? 'Guest',
+              avatarUrl: metadata?.avatarUrl ?? '/avatars/avatars/0.png',
+              isHandRaised: !metadata?.isHandRaised,
+            });
           }}
           className={cn(
-            " w-full text-sm text-slate-100 py-2 rounded-lg font-inter flex items-center justify-center font-medium",
-            isHandRaised ? "bg-custom-1" : "bg-custom-8"
+            ' w-full text-sm text-slate-100 py-2 rounded-lg font-inter flex items-center justify-center font-medium',
+            metadata?.isHandRaised ? 'bg-custom-1' : 'bg-custom-8'
           )}
         >
-          ✋ {isHandRaised ? "Lower Hand" : "Raise Hand"}
+          ✋ {metadata?.isHandRaised  ? 'Lower Hand' : 'Raise Hand'}
         </button>
         <div className="grid grid-cols-5 place-items-center gap-2">
           {emojis.map((emoji) => (
             <span
               key={emoji}
               onClick={() => {
-                sendData(
-                  "*", {
-                    reaction: emoji,
-                  }
-                )
+                sendData({
+                  to: '*',
+                  payload: emoji,
+                  label: 'reaction',
+                });
                 setMyReaction(emoji);
               }}
               role="presentation"

@@ -1,15 +1,17 @@
 import React from "react";
 import Strip from "./Strip";
-import { useAcl, useRoom, useHuddle01 } from "@huddle01/react/hooks";
+import { useRoom, useHuddle01, useLocalPeer, useRemotePeer } from "@huddle01/react/hooks";
+import { Role } from "@huddle01/server-sdk/auth";
 
 type ListenersDataProps = {
   peerId: string;
 };
 
 const ListenersData: React.FC<ListenersDataProps> = ({ peerId }) => {
-  const { changePeerRole, kickPeer } = useAcl();
+  
   const { leaveRoom } = useRoom();
-  const { me } = useHuddle01();
+  const { updateRole } = useRemotePeer({ peerId });
+  const me = useLocalPeer();
 
   return (
     <>
@@ -20,7 +22,7 @@ const ListenersData: React.FC<ListenersDataProps> = ({ peerId }) => {
             title="Invite as Co-Host"
             variant="normal"
             onClick={() => {
-              changePeerRole(peerId, "coHost");
+              updateRole(Role.CO_HOST);
             }}
           />
         </div>
@@ -32,7 +34,7 @@ const ListenersData: React.FC<ListenersDataProps> = ({ peerId }) => {
             title="Invite as Speaker"
             variant="normal"
             onClick={() => {
-              changePeerRole(peerId, "speaker");
+              updateRole(Role.SPEAKER);
             }}
           />
           <Strip
@@ -40,7 +42,7 @@ const ListenersData: React.FC<ListenersDataProps> = ({ peerId }) => {
             title="Remove from spaces"
             variant="danger"
             onClick={() => {
-              kickPeer(peerId);
+              // kickPeer(peerId);
             }}
           />
         </div>

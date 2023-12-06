@@ -1,15 +1,17 @@
 import React from "react";
 import Strip from "./Strip";
-import { useRoom, useHuddle01 } from "@huddle01/react/hooks";
+import { useRoom, useLocalPeer, useRemotePeer } from "@huddle01/react/hooks";
+import { Role } from "@huddle01/server-sdk/auth";
 
 type HostDataProps = {
   peerId: string;
 };
 
 const HostData: React.FC<HostDataProps> = ({ peerId }) => {
-  const { leaveRoom, endRoom } = useRoom();
+  const { leaveRoom, closeRoom } = useRoom();
+  const { updateRole } = useRemotePeer({ peerId });
 
-  const { me } = useHuddle01();
+  const me = useLocalPeer();
 
   return (
     <>
@@ -20,7 +22,7 @@ const HostData: React.FC<HostDataProps> = ({ peerId }) => {
             title="End spaces for all"
             variant="danger"
             onClick={() => {
-              endRoom();
+              closeRoom();
             }}
           />
           <Strip
