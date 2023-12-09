@@ -35,78 +35,72 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
   const setAvatarUrl = useStore((state) => state.setAvatarUrl);
   const setUserDisplayName = useStore((state) => state.setUserDisplayName);
   const userDisplayName = useStore((state) => state.userDisplayName);
-  const [numberOfPeers, setNumberOfPeers] = useState<number>(0);
   const [token, setToken] = useState<string>('');
+  const [isJoining, setIsJoining] = useState<boolean>(false);
 
   const { push } = useRouter();
 
   // Huddle Hooks
   const { joinRoom, state, room } = useRoom();
 
-  useEffect(() => {
-    if (state !== 'connected') {
-      const getToken = async () => {
-        try {
-          const response = await fetch(
-            `https://gamma.iriko.huddle01.com/api/v1/live-meeting/preview-peers?roomId=${params.roomId}`,
-            {
-              headers: {
-                'x-api-key': process.env.NEXT_PUBLIC_API_KEY ?? '',
-              },
-            }
-          );
-          const data = await response.json();
-          console.log('data', data.previewPeers.length);
-          const accessToken = new AccessToken({
-            apiKey: process.env.NEXT_PUBLIC_API_KEY ?? '',
-            roomId: params.roomId,
-            // role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
-            role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
-            permissions: {
-              admin: true,
-              canConsume: true,
-              canProduce: true,
-              canProduceSources: { cam: true, mic: true, screen: true },
-              canRecvData: true,
-              canSendData: true,
-              canUpdateMetadata: true,
-            },
-          });
-          const userToken = await accessToken.toJwt();
-
-          console.log({ userToken });
-
-          setToken(userToken);
-        } catch (error) {
-          console.log(error);
-          const accessToken = new AccessToken({
-            apiKey: process.env.NEXT_PUBLIC_API_KEY ?? '',
-            roomId: params.roomId,
-            // role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
-            role: Role.HOST,
-            permissions: {
-              admin: true,
-              canConsume: true,
-              canProduce: true,
-              canProduceSources: { cam: true, mic: true, screen: true },
-              canRecvData: true,
-              canSendData: true,
-              canUpdateMetadata: true,
-            },
-          });
-          const userToken = await accessToken.toJwt();
-
-          console.log({ userToken });
-
-          setToken(userToken);
-        }
-      };
-      getToken();
-    }
-    console.log('room', room);
-  }, []);
-
   const handleStartSpaces = async () => {
+    setIsJoining(true);
+    let token = '';
+    if (state !== 'connected') {
+      try {
+        const response = await fetch(
+          `https://gamma.iriko.huddle01.com/api/v1/live-meeting/preview-peers?roomId=${params.roomId}`,
+          {
+            headers: {
+              'x-api-key': process.env.NEXT_PUBLIC_API_KEY ?? '',
+            },
+          }
+        );
+        const data = await response.json();
+        console.log('data', data.previewPeers.length);
+        const accessToken = new AccessToken({
+          apiKey: process.env.NEXT_PUBLIC_API_KEY ?? '',
+          roomId: params.roomId,
+          // role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
+          role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
+          permissions: {
+            admin: true,
+            canConsume: true,
+            canProduce: true,
+            canProduceSources: { cam: true, mic: true, screen: true },
+            canRecvData: true,
+            canSendData: true,
+            canUpdateMetadata: true,
+          },
+        });
+        const userToken = await accessToken.toJwt();
+
+        console.log({ userToken });
+
+        token = userToken;
+      } catch (error) {
+        console.log(error);
+        const accessToken = new AccessToken({
+          apiKey: process.env.NEXT_PUBLIC_API_KEY ?? '',
+          roomId: params.roomId,
+          // role: data.previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
+          role: Role.HOST,
+          permissions: {
+            admin: true,
+            canConsume: true,
+            canProduce: true,
+            canProduceSources: { cam: true, mic: true, screen: true },
+            canRecvData: true,
+            canSendData: true,
+            canUpdateMetadata: true,
+          },
+        });
+        const userToken = await accessToken.toJwt();
+        console.log({ userToken });
+        token = userToken;
+      }
+    }
+
     if (!userDisplayName.length) {
       toast.error('Display name is required!');
       return;
@@ -118,6 +112,7 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
         token,
       });
     }
+    setIsJoining(false);
   };
 
   useEffect(() => {
@@ -219,14 +214,16 @@ const Lobby = ({ params }: { params: { roomId: string } }) => {
             className="flex items-center justify-center bg-[#246BFD] text-slate-100 rounded-md p-2 mt-2 w-full"
             onClick={handleStartSpaces}
           >
-            {'Start Spaces'}
-            <Image
-              alt="narrow-right"
-              width={30}
-              height={30}
-              src="/images/arrow-narrow-right.svg"
-              className="w-6 h-6 ml-1"
-            />
+            {isJoining ? 'Joining Spaces...' : 'Start Spaces'}
+            {!isJoining && (
+              <Image
+                alt="narrow-right"
+                width={30}
+                height={30}
+                src="/images/arrow-narrow-right.svg"
+                className="w-6 h-6 ml-1"
+              />
+            )}
           </button>
         </div>
       </div>

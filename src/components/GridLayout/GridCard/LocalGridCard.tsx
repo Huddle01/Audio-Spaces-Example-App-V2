@@ -3,23 +3,16 @@ import Image from 'next/image';
 
 // Assets
 import { BasicIcons } from '@/assets/BasicIcons';
-import Audio from '@/components/common/Audio';
-import { IRoleEnum } from '@/utils/types';
 import useStore from '@/store/slices';
 import {
   useDataMessage,
-  useHuddle01,
-  useLocalAudio,
   useLocalPeer,
-  useRemotePeer,
 } from '@huddle01/react/hooks';
 
 const LocalGridCard: FC = () => {
   const [reaction, setReaction] = useState('');
-  const isMyHandRaised = useStore((state) => state.isMyHandRaised);
-  const myReaction = useStore((state) => state.myReaction);
 
-  const { metadata, peerId: localPeerId, role, updateMetadata } = useLocalPeer<{
+  const { metadata, peerId: localPeerId, role } = useLocalPeer<{
     displayName: string;
     avatarUrl: string;
     isHandRaised: boolean;

@@ -28,7 +28,7 @@ const Home = ({ params }: { params: { roomId: string } }) => {
   const { state } = useRoom({
     onLeave: () => {
       push(`/${params.roomId}/lobby`);
-    }
+    },
   });
   const { push } = useRouter();
   // const { changePeerRole } = useAcl();
@@ -75,7 +75,7 @@ const Home = ({ params }: { params: { roomId: string } }) => {
         }, 5000);
       }
 
-      if (label === 'chat' && from !== peerId ) {
+      if (label === 'chat' && from !== peerId) {
         const messagePayload = JSON.parse(payload);
         const newChatMessage = {
           name: messagePayload.name,
@@ -99,11 +99,7 @@ const Home = ({ params }: { params: { roomId: string } }) => {
         <GridLayout />
         <Sidebar />
         <div className="absolute right-4 bottom-20">
-          {showAcceptRequest && (
-            <AcceptRequest
-              peerId={requestedPeerId}
-            />
-          )}
+          {showAcceptRequest && <AcceptRequest peerId={requestedPeerId} />}
         </div>
       </div>
       {isChatOpen && <Chat />}

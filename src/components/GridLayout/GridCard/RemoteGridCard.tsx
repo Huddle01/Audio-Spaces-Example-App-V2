@@ -3,25 +3,18 @@ import Image from 'next/image';
 
 // Assets
 import { BasicIcons } from '@/assets/BasicIcons';
-import Audio from '@/components/common/Audio';
-import { IRoleEnum } from '@/utils/types';
-import useStore from '@/store/slices';
 import {
   useDataMessage,
-  useHuddle01,
-  useLocalPeer,
   useRemoteAudio,
   useRemotePeer,
 } from '@huddle01/react/hooks';
-import { metadata } from '@/app/layout';
+import AudioElem from '@/components/common/AudioElem';
 
 type GridCardProps = {
   peerId: string;
 };
 
-const GridCard: React.FC<GridCardProps> = ({
-  peerId,
-}) => {
+const GridCard: React.FC<GridCardProps> = ({ peerId }) => {
   const [reaction, setReaction] = useState('');
 
   const { metadata, role } = useRemotePeer<{
@@ -30,7 +23,12 @@ const GridCard: React.FC<GridCardProps> = ({
     isHandRaised: boolean;
   }>({ peerId });
 
-  const { track, isAudioOn } = useRemoteAudio({ peerId });
+  const { stream, isAudioOn } = useRemoteAudio({
+    peerId,
+    onPlayable: () => {
+      console.debug('ON PLAYABLE');
+    },
+  });
 
   useDataMessage({
     onMessage(payload, from, label) {
@@ -47,7 +45,7 @@ const GridCard: React.FC<GridCardProps> = ({
 
   return (
     <div className="relative flex items-center justify-center flex-col">
-      {track && <Audio track={track} />}
+      {stream && <AudioElem peerId={peerId} />}
       <Image
         src={metadata?.avatarUrl || '/avatar/avatar/0.png'}
         alt="default-avatar"

@@ -16,6 +16,7 @@ import {
   usePeerIds,
   useRoom,
 } from '@huddle01/react/hooks';
+import toast from 'react-hot-toast';
 
 type BottomBarProps = {};
 
@@ -28,7 +29,12 @@ const BottomBar: React.FC<BottomBarProps> = () => {
 
   const { leaveRoom, closeRoom } = useRoom();
 
-  const { enableAudio, disableAudio, isAudioOn } = useLocalAudio();
+  const { enableAudio, disableAudio, isAudioOn } = useLocalAudio({
+    onProduceStart(producer) {
+      toast.success('Producer created');
+      console.debug('Producer created', producer);
+    },
+  });
 
   const sidebarView = useStore((state) => state.sidebar.sidebarView);
 
