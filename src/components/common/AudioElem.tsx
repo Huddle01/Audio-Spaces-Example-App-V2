@@ -10,9 +10,6 @@ const PeerAudioElem: React.FC<Props> = ({ peerId }) => {
 
   const { stream, state } = useRemoteAudio({
     peerId,
-    onPlayable(data) {
-      console.log('onPlayable', data);
-    },
   });
 
   useEffect(() => {
@@ -25,7 +22,6 @@ const PeerAudioElem: React.FC<Props> = ({ peerId }) => {
 
       audioRef.current.onloadedmetadata = async () => {
         try {
-          console.log('here ');
           audioRef.current?.play();
         } catch (error) {
           console.error(error);

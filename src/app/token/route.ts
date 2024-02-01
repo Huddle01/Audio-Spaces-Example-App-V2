@@ -1,8 +1,12 @@
-import { AccessToken, Role } from "@huddle01/server-sdk/auth";
+import { AccessToken, Role } from '@huddle01/server-sdk/auth';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-const createToken = async (roomId: string, role: string) => {
+const createToken = async (
+  roomId: string,
+  role: string,
+  displayName: string
+) => {
   const accessToken = new AccessToken({
     apiKey: process.env.API_KEY!,
     roomId: roomId as string,
@@ -20,6 +24,11 @@ const createToken = async (roomId: string, role: string) => {
       canSendData: true,
       canUpdateMetadata: true,
     },
+    options: {
+      metadata: {
+        displayName,
+      },
+    },
   });
 
   const token = await accessToken.toJwt();
@@ -30,33 +39,34 @@ const createToken = async (roomId: string, role: string) => {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
-  const roomId = searchParams.get("roomId");
+  const roomId = searchParams.get('roomId');
+  const name = searchParams.get('name');
 
   if (!roomId) {
-    return new Response("Missing roomId", { status: 400 });
+    return new Response('Missing roomId', { status: 400 });
   }
 
   let token: string;
 
   try {
     const response = await fetch(
-      `https://gamma.iriko.huddle01.com/api/v1/live-meeting/preview-peers?roomId=${roomId}`,
+      `https://api.huddle01.com/api/v1/live-meeting/preview-peers?roomId=${roomId}`,
       {
         headers: {
-          "x-api-key": process.env.API_KEY ?? "",
+          'x-api-key': process.env.API_KEY ?? '',
         },
       }
     );
     const data = await response.json();
-    console.log(data);
     const { previewPeers } = data;
 
     token = await createToken(
       roomId,
-      previewPeers.length > 0 ? Role.LISTENER : Role.HOST
+      previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
+      name ?? 'Guest'
     );
   } catch (error) {
-    token = await createToken(roomId, Role.HOST);
+    token = await createToken(roomId, Role.HOST, name ?? 'Guest');
   }
 
   return new Response(token, { status: 200 });
