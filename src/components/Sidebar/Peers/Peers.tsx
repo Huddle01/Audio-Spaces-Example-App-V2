@@ -50,13 +50,20 @@ const Peers: React.FC<PeersProps> = () => {
 
       {/* Host */}
       {(hostPeerIds.length > 0 || me.role === Role.HOST) && (
-        <PeerList className="mt-5" title="Host">
+        <PeerList
+          count={hostPeerIds.length + (me.role == "host" ? 1 : 0)}
+          className="mt-5"
+          title="Hosts"
+        >
           <HostsList className="mt-5" />
         </PeerList>
       )}
       {/* Co-Hosts */}
       {(coHostPeerIds.length > 0 || me.role === Role.CO_HOST) && (
-        <PeerList title="Co-Hosts">
+        <PeerList
+          title="Co-Hosts"
+          count={coHostPeerIds.length + (me.role == "co-host" ? 1 : 0)}
+        >
           <CoHostsList className="mt-5" />
         </PeerList>
       )}
