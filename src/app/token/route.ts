@@ -8,7 +8,7 @@ const createToken = async (
   displayName: string,
 ) => {
   const accessToken = new AccessToken({
-    apiKey: process.env.API_KEY!,
+    apiKey: process.env.API_KEY as string,
     roomId: roomId as string,
     role: role,
     permissions: {
