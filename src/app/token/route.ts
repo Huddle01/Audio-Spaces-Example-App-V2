@@ -5,10 +5,10 @@ export const dynamic = 'force-dynamic';
 const createToken = async (
   roomId: string,
   role: string,
-  displayName: string
+  displayName: string,
 ) => {
   const accessToken = new AccessToken({
-    apiKey: process.env.API_KEY!,
+    apiKey: process.env.API_KEY as string,
     roomId: roomId as string,
     role: role,
     permissions: {
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
         headers: {
           'x-api-key': process.env.API_KEY ?? '',
         },
-      }
+      },
     );
     const data = await response.json();
     const { previewPeers } = data;
@@ -63,7 +63,7 @@ export async function GET(request: Request) {
     token = await createToken(
       roomId,
       previewPeers.length > 0 ? Role.LISTENER : Role.HOST,
-      name ?? 'Guest'
+      name ?? 'Guest',
     );
   } catch (error) {
     token = await createToken(roomId, Role.HOST, name ?? 'Guest');

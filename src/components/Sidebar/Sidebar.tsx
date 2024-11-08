@@ -21,7 +21,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
     <aside
       className={cn(
         'w-1/4 bg-custom-3 h-[40rem] mr-1 rounded-md  transition-all duration-300 ease-out flex-col max-h-[80vh] my-16',
-        isSidebarOpen ? 'flex' : 'hidden'
+        isSidebarOpen ? 'flex' : 'hidden',
       )}
     >
       <Header

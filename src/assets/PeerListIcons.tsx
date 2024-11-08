@@ -1,4 +1,4 @@
-import { INestedSvgIcons, ISvgIcons } from "@/types";
+import type { INestedSvgIcons, ISvgIcons } from '@/types';
 
 export const PeerListIcons: ISvgIcons = {
   info: (

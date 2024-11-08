@@ -1,6 +1,6 @@
-import { cn } from "@/utils/helpers";
-import React from "react";
-import ChildrenContainer from "./ChildrenContainer";
+import { cn } from '@/utils/helpers';
+import type React from 'react';
+import ChildrenContainer from './ChildrenContainer';
 
 type OverlayContainerProps = {
   onClick?: () => void;
@@ -13,7 +13,7 @@ const OverlayContainer: React.FC<OverlayContainerProps> = ({
 }) => (
   <div
     className={cn(
-      "bg-rgbColors-1 w-full h-screen absolute inset-0 z-50 grid place-items-center"
+      'bg-rgbColors-1 w-full h-screen absolute inset-0 z-50 grid place-items-center',
     )}
     role="presentation"
     onClick={onClick}

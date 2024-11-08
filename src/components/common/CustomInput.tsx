@@ -1,6 +1,6 @@
-import { InputIcons } from "@/assets/InputIcons";
-import { cn } from "@/utils/helpers";
-import React, { ChangeEvent } from "react";
+import { InputIcons } from '@/assets/InputIcons';
+import { cn } from '@/utils/helpers';
+import React, { type ChangeEvent } from 'react';
 
 type CustomInputProps = {
   type: string;
@@ -22,8 +22,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 bg-rgbColors-2 rounded-lg p-2",
-        className
+        'flex items-center gap-3 bg-rgbColors-2 rounded-lg p-2',
+        className,
       )}
     >
       <div>{InputIcons[type]}</div>

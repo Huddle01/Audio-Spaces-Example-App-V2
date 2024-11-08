@@ -1,18 +1,19 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { type FC, useState } from 'react';
 import Image from 'next/image';
 
 // Assets
 import { BasicIcons } from '@/assets/BasicIcons';
-import useStore from '@/store/slices';
-import {
-  useDataMessage,
-  useLocalPeer,
-} from '@huddle01/react/hooks';
+import { useDataMessage, useLocalPeer } from '@huddle01/react/hooks';
+import { getFallbackAvatar } from '@/utils/helpers';
 
 const LocalGridCard: FC = () => {
   const [reaction, setReaction] = useState('');
 
-  const { metadata, peerId: localPeerId, role } = useLocalPeer<{
+  const {
+    metadata,
+    peerId: localPeerId,
+    role,
+  } = useLocalPeer<{
     displayName: string;
     avatarUrl: string;
     isHandRaised: boolean;
@@ -34,7 +35,7 @@ const LocalGridCard: FC = () => {
   return (
     <div className="relative flex items-center justify-center flex-col">
       <Image
-        src={metadata?.avatarUrl || '/avatar/avatar/0.png'}
+        src={metadata?.avatarUrl || getFallbackAvatar()}
         alt="default-avatar"
         width={100}
         height={100}

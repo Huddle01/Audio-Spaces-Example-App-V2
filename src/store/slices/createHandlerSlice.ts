@@ -1,4 +1,5 @@
-import { StoreSlice } from '../types';
+import { getFallbackAvatar } from '@/utils/helpers';
+import type { StoreSlice } from '../types';
 
 export type TSidebarView = 'close' | 'peers';
 export type TPromptView = 'close' | 'request-to-speak';
@@ -41,7 +42,7 @@ const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
     isSidebarOpen: false,
     sidebarView: 'close',
   },
-  avatarUrl: '/avatars/avatars/0.png',
+  avatarUrl: getFallbackAvatar(),
   chatView: 'close',
   isChatOpen: false,
   promptView: 'close',
@@ -138,7 +139,7 @@ const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
     set(() => ({
       showAcceptRequest: val,
     }));
-  }
+  },
 });
 
 export default createHandlerSlice;

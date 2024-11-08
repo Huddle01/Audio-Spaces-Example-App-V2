@@ -1,15 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import useStore from '@/store/slices';
 import Strip from '../Sidebar/Peers/PeerRole/Strip';
 
 // Assets
 import { BasicIcons, NestedBasicIcons } from '@/assets/BasicIcons';
-import { cn } from '@/utils/helpers';
+import { cn, getFallbackAvatar } from '@/utils/helpers';
 import Dropdown from '../common/Dropdown';
 import EmojiTray from '../EmojiTray/EmojiTray';
-import { useRouter } from 'next/navigation';
 import {
   useLocalPeer,
   useLocalAudio,
@@ -17,6 +16,7 @@ import {
   useRoom,
 } from '@huddle01/react/hooks';
 import toast from 'react-hot-toast';
+import { NestedPeerListIcons } from '@/assets/PeerListIcons';
 
 type BottomBarProps = {};
 
@@ -24,8 +24,6 @@ const BottomBar: React.FC<BottomBarProps> = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const { peerIds } = usePeerIds();
-
-  const { push } = useRouter();
 
   const { leaveRoom, closeRoom } = useRoom();
 
@@ -45,7 +43,18 @@ const BottomBar: React.FC<BottomBarProps> = () => {
 
   const setPromptView = useStore((state) => state.setPromptView);
 
-  const { role, metadata, updateRole, peerId: localPeerId } = useLocalPeer();
+  const {
+    role,
+    metadata,
+    peerId,
+    updateMetadata,
+    updateRole,
+    peerId: localPeerId,
+  } = useLocalPeer<{
+    displayName: string;
+    avatarUrl: string;
+    isHandRaised: boolean;
+  }>();
 
   const [showLeaveDropDown, setShowLeaveDropDown] = useState<boolean>(false);
 
@@ -54,7 +63,7 @@ const BottomBar: React.FC<BottomBarProps> = () => {
       {/* Bottom Bar Left */}
       <div>
         {role === 'host' || role === 'coHost' || role === 'speaker' ? (
-          <div className="mr-auto flex items-center justify-between gap-3 w-44"></div>
+          <div className="mr-auto flex items-center justify-between gap-3 w-44" />
         ) : (
           <OutlineButton
             className="mr-auto flex items-center justify-between gap-3"
@@ -96,6 +105,22 @@ const BottomBar: React.FC<BottomBarProps> = () => {
             onClose={() => setIsOpen(false)}
           />
         </Dropdown>
+        <button
+          className="bg-custom-3 border-custom-4 rounded-lg p-[11px] z-10"
+          onClick={() => {
+            if (peerId === localPeerId) {
+              updateMetadata({
+                displayName: metadata?.displayName ?? 'Guest',
+                avatarUrl: metadata?.avatarUrl ?? getFallbackAvatar(),
+                isHandRaised: !metadata?.isHandRaised,
+              });
+            }
+          }}
+        >
+          {metadata?.isHandRaised
+            ? NestedPeerListIcons.active.hand
+            : NestedPeerListIcons.inactive.hand}
+        </button>
         <Dropdown
           triggerChild={BasicIcons.leave}
           open={showLeaveDropDown}
@@ -113,7 +138,7 @@ const BottomBar: React.FC<BottomBarProps> = () => {
           )}
           <Strip
             type="leave"
-            title="Leave the spaces"
+            title="Leave the space"
             variant="danger"
             onClick={() => {
               leaveRoom();

@@ -1,7 +1,7 @@
 'use client';
-import React from 'react';
+import type React from 'react';
+import { useId } from 'react';
 import useChatScroll from './ChatScroll';
-import { nanoid } from 'nanoid';
 import useStore from '@/store/slices';
 import { useState, useRef } from 'react';
 import { BasicIcons } from '@/assets/BasicIcons';
@@ -47,10 +47,10 @@ const Chat = () => {
     });
   };
 
-  const displayChats = chatMessages.map((chat) => {
+  const displayChats = chatMessages.map((chat, index) => {
     return (
       <div
-        key={nanoid()}
+        key={index}
         className={`${
           chat.is_user
             ? 'ml-auto text-md break-words max-w-xs w-fit py-1 px-4 mb-2 bg-[#216CFC] rounded-2xl items-center flex'

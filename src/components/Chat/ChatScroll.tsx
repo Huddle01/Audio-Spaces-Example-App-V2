@@ -1,9 +1,9 @@
-import React from 'react';
+import { useEffect, useRef } from 'react';
 
-function useChatScroll(dep: any) {
-  const ref = React.useRef<HTMLDivElement>(null);
+function useChatScroll(dep: object) {
+  const ref = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       ref.current.scrollTop = ref.current.scrollHeight;
     }

@@ -1,11 +1,11 @@
-import { StateCreator } from "zustand";
-import { ISidebarState } from "../slices/createHandlerSlice";
+import type { StateCreator } from 'zustand';
+import type { ISidebarState } from '../slices/createHandlerSlice';
 
 export type IState = ISidebarState;
 
 export type StoreSlice<T> = StateCreator<
   IState,
-  [["zustand/devtools", never]],
+  [['zustand/devtools', never]],
   [],
   T
 >;

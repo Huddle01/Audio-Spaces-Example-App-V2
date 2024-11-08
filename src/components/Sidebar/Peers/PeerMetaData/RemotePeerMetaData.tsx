@@ -1,6 +1,6 @@
 import { NestedPeerListIcons, PeerListIcons } from '@/assets/PeerListIcons';
 import Dropdown from '@/components/common/Dropdown';
-import { cn } from '@/utils/helpers';
+import { cn, getFallbackAvatar } from '@/utils/helpers';
 import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
 import HostData from '../PeerRole/HostData';
@@ -47,7 +47,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
     <div className={cn(className, 'flex items-center justify-between w-full')}>
       <div className="flex items-center gap-2">
         <Image
-          src={metadata?.avatarUrl ?? '/avatars/avatars/0.png'}
+          src={metadata?.avatarUrl ?? getFallbackAvatar()}
           alt="default"
           width={30}
           height={30}

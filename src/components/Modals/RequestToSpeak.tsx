@@ -1,5 +1,5 @@
 import { NestedBasicIcons } from '@/assets/BasicIcons';
-import React from 'react';
+import type React from 'react';
 import Button from '../common/Button';
 import useStore from '@/store/slices';
 import {
