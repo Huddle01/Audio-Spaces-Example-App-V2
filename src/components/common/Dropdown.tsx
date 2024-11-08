@@ -19,9 +19,9 @@ const Dropdown: React.FC<DropdownProps> = ({
   align,
 }) => {
   return (
-    <DropdownMenu.Root open={open} onOpenChange={onOpenChange}>
+    <DropdownMenu.Root  open={open} onOpenChange={onOpenChange}>
       <DropdownMenu.Trigger asChild>
-        <span>{triggerChild}</span>
+        <span className="cursor-pointer">{triggerChild}</span>
       </DropdownMenu.Trigger>
 
       <DropdownMenu.Content

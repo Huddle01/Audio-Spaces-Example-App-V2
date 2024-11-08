@@ -9,6 +9,7 @@ import {
   useRemotePeer,
 } from '@huddle01/react/hooks';
 import AudioElem from '@/components/common/AudioElem';
+import { getFallbackAvatar } from '@/utils/helpers';
 
 type GridCardProps = {
   peerId: string;
@@ -47,7 +48,7 @@ const GridCard: React.FC<GridCardProps> = ({ peerId }) => {
     <div className="relative flex items-center justify-center flex-col">
       {stream && <AudioElem peerId={peerId} />}
       <Image
-        src={metadata?.avatarUrl || '/avatar/avatar/0.png'}
+        src={metadata?.avatarUrl || getFallbackAvatar()}
         alt="default-avatar"
         width={100}
         height={100}
@@ -65,7 +66,7 @@ const GridCard: React.FC<GridCardProps> = ({ peerId }) => {
       <div className="absolute left-1/2 bottom-1/2 -translate-x-1/2 mb-2 text-4xl">
         {reaction}
       </div>
-      {role && ['host, coHost, speaker'].includes(role) && (
+      {role && ["host, coHost, speaker"].includes(role) && (
         <div className="absolute right-0">{BasicIcons.audio}</div>
       )}
       {metadata?.isHandRaised && (

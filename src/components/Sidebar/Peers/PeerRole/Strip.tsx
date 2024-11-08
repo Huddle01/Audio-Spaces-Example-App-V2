@@ -16,12 +16,14 @@ const Strip: React.FC<StripProps> = ({ type, title, variant, onClick }) => {
       className={cn(
         "flex items-center gap-3 text-sm font-normal mb-1 last:mb-0 transition-all duration-300 ease-in-out p-1 cursor-pointer rounded-md",
         variant === "normal"
-          ? "text-rgbColors-3"
+          ? "text-rgbColors-3 hover:bg-rgbColors-3/10"
           : " text-red-400 hover:bg-rgbColors-4 "
       )}
       onClick={onClick}
     >
-      <div className="flex w-6 h-6 justify-center items-center">{PeerListIcons[type]}</div>
+      <div className="flex w-6 h-6 justify-center items-center">
+        {PeerListIcons[type]}
+      </div>
       <div>{title}</div>
     </div>
   );

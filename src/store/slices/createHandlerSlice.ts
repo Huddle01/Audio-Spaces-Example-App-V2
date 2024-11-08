@@ -1,3 +1,4 @@
+import { getFallbackAvatar } from '@/utils/helpers';
 import { StoreSlice } from '../types';
 
 export type TSidebarView = 'close' | 'peers';
@@ -39,16 +40,16 @@ export interface ISidebarState {
 const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
   sidebar: {
     isSidebarOpen: false,
-    sidebarView: 'close',
+    sidebarView: "close",
   },
-  avatarUrl: '/avatars/avatars/0.png',
-  chatView: 'close',
+  avatarUrl: getFallbackAvatar(),
+  chatView: "close",
   isChatOpen: false,
-  promptView: 'close',
+  promptView: "close",
   isMyHandRaised: false,
-  myReaction: '',
+  myReaction: "",
   requestedPeers: [],
-  userDisplayName: '',
+  userDisplayName: "",
   chatMessages: [],
   showAcceptRequest: false,
 
@@ -61,11 +62,11 @@ const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
   setSidebarView(sidebarView: TSidebarView) {
     const prevView = get().sidebar.sidebarView;
 
-    if (sidebarView === 'close' || sidebarView === prevView) {
+    if (sidebarView === "close" || sidebarView === prevView) {
       set(() => ({
         sidebar: {
           isSidebarOpen: false,
-          sidebarView: 'close',
+          sidebarView: "close",
         },
       }));
     }
@@ -87,9 +88,9 @@ const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
   setPromptView: (val: TPromptView) => {
     const prevPromptView = get().promptView;
 
-    if (val === 'close' || val === prevPromptView) {
+    if (val === "close" || val === prevPromptView) {
       set(() => ({
-        promptView: 'close',
+        promptView: "close",
       }));
     }
 
@@ -138,7 +139,7 @@ const createHandlerSlice: StoreSlice<ISidebarState> = (set, get) => ({
     set(() => ({
       showAcceptRequest: val,
     }));
-  }
+  },
 });
 
 export default createHandlerSlice;

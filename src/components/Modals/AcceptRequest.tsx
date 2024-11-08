@@ -2,6 +2,7 @@ import Image from "next/image";
 import { usePeerIds, useRemotePeer } from "@huddle01/react/hooks";
 import useStore from "@/store/slices";
 import { Role } from "@huddle01/server-sdk/auth";
+import { getFallbackAvatar } from "@/utils/helpers";
 
 type AcceptRequestProps = {
   peerId: string;
@@ -23,7 +24,7 @@ const AcceptRequest: React.FC<AcceptRequestProps> = ({
     <div className="inline-flex p-4 flex-col justify-center items-center rounded-lg bg-custom-2">
       <div className="flex flex-col justify-center items-start gap-2">
         <Image
-          src={metadata?.avatarUrl ?? "/avatar/avatars/0.png"}
+          src={metadata?.avatarUrl ?? getFallbackAvatar()}
           alt="avatar"
           width={50}
           height={50}
