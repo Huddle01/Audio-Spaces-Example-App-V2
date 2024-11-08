@@ -54,13 +54,12 @@ const Home = ({ params }: { params: { roomId: string } }) => {
     if (state === 'idle') {
       push(`/${params.roomId}/lobby`);
       return;
-    } else {
-      updateMetadata({
-        displayName: userDisplayName,
-        avatarUrl: avatarUrl,
-        isHandRaised: metadata?.isHandRaised || false,
-      });
     }
+    updateMetadata({
+      displayName: userDisplayName,
+      avatarUrl: avatarUrl,
+      isHandRaised: metadata?.isHandRaised || false,
+    });
   }, []);
 
   useDataMessage({
@@ -93,11 +92,11 @@ const Home = ({ params }: { params: { roomId: string } }) => {
   }, [requestedPeers]);
 
   return (
-    <section className='bg-audio flex h-screen items-center justify-center w-full relative  text-slate-100'>
-      <div className='flex items-center justify-center w-full'>
+    <section className="bg-audio flex h-screen items-center justify-center w-full relative  text-slate-100">
+      <div className="flex items-center justify-center w-full">
         <GridLayout />
         <Sidebar />
-        <div className='absolute right-4 bottom-20'>
+        <div className="absolute right-4 bottom-20">
           {showAcceptRequest && <AcceptRequest peerId={requestedPeerId} />}
         </div>
       </div>

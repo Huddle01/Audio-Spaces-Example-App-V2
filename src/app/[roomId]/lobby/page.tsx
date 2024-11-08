@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 // Assets
-import { toast } from "react-hot-toast";
-import { BasicIcons } from "@/assets/BasicIcons";
+import { toast } from 'react-hot-toast';
+import { BasicIcons } from '@/assets/BasicIcons';
 
 // Components
-import FeatCommon from "@/components/common/FeatCommon";
-import AvatarWrapper from "@/components/common/AvatarWrapper";
+import FeatCommon from '@/components/common/FeatCommon';
+import AvatarWrapper from '@/components/common/AvatarWrapper';
 
 // Store
-import useStore from "@/store/slices";
+import useStore from '@/store/slices';
 
 // Hooks
-import { useRoom } from "@huddle01/react/hooks";
+import { useRoom } from '@huddle01/react/hooks';
 
 type TLobboyProps = { params: { roomId: string } };
 
@@ -35,28 +35,27 @@ const Lobby = ({ params }: TLobboyProps) => {
 
   const handleStartSpaces = async () => {
     setIsJoining(true);
-    let token = "";
-    if (state !== "connected") {
+    let token = '';
+    if (state !== 'connected') {
       const response = await fetch(
-        `/token?roomId=${params.roomId}&name=${userDisplayName}`
+        `/token?roomId=${params.roomId}&name=${userDisplayName}`,
       );
       token = await response.text();
     }
 
     if (!userDisplayName.length) {
-      toast.error("Display name is required!");
+      toast.error('Display name is required!');
       return;
-    } else {
-      await joinRoom({
-        roomId: params.roomId,
-        token,
-      });
     }
+    await joinRoom({
+      roomId: params.roomId,
+      token,
+    });
     setIsJoining(false);
   };
 
   useEffect(() => {
-    if (state === "connected") {
+    if (state === 'connected') {
       push(`/${params.roomId}`);
     }
   }, [state]);
@@ -92,8 +91,8 @@ const Lobby = ({ params }: TLobboyProps) => {
             onClose={() => setIsOpen(false)}
             className={
               isOpen
-                ? "absolute top-4 block"
-                : "absolute top-1/2 -translate-y-1/2 hidden "
+                ? 'absolute top-4 block'
+                : 'absolute top-1/2 -translate-y-1/2 hidden '
             }
           >
             <div className="relative mt-5">
@@ -142,7 +141,7 @@ const Lobby = ({ params }: TLobboyProps) => {
                 onChange={(e) => {
                   setUserDisplayName(e.target.value);
                 }}
-                onKeyDown={(e) => e.key === "Enter" && handleStartSpaces()}
+                onKeyDown={(e) => e.key === 'Enter' && handleStartSpaces()}
                 type="text"
                 placeholder="Enter your name"
                 className="flex-1 bg-transparent py-3 outline-none"
@@ -155,7 +154,7 @@ const Lobby = ({ params }: TLobboyProps) => {
             className="flex items-center justify-center bg-[#246BFD] text-slate-100 rounded-md p-2 mt-2 w-full"
             onClick={handleStartSpaces}
           >
-            {isJoining ? "Joining Spaces..." : "Start Spaces"}
+            {isJoining ? 'Joining Spaces...' : 'Start Spaces'}
             {!isJoining && (
               <Image
                 alt="narrow-right"

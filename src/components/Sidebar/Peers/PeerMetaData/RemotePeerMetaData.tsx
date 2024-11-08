@@ -44,7 +44,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
   const removeRequestedPeers = useStore((state) => state.removeRequestedPeers);
 
   return (
-    <div className={cn(className, "flex items-center justify-between w-full")}>
+    <div className={cn(className, 'flex items-center justify-between w-full')}>
       <div className="flex items-center gap-2">
         <Image
           src={metadata?.avatarUrl ?? getFallbackAvatar()}
@@ -67,7 +67,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
             }
           }}
           onAccept={() => {
-            if (peerId && role && ["host", "coHost"].includes(role)) {
+            if (peerId && role && ['host', 'coHost'].includes(role)) {
               updateRole(Role.SPEAKER);
               removeRequestedPeers(peerId);
             }
@@ -90,7 +90,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
             align="end"
           >
             {role && RoleData[role as keyof typeof RoleData]}
-          </Dropdown>{" "}
+          </Dropdown>{' '}
         </div>
       )}
     </div>

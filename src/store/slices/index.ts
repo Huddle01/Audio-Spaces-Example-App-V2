@@ -1,17 +1,17 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-import { IState } from "../types";
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+import type { IState } from '../types';
 
 // Slices
-import createHandlerSlice from "./createHandlerSlice";
+import createHandlerSlice from './createHandlerSlice';
 
 const useStore = create<IState>()(
   devtools(
     (...a) => ({
       ...createHandlerSlice(...a),
     }),
-    { name: "store" }
-  )
+    { name: 'store' },
+  ),
 );
 
 const { getState, setState } = useStore;

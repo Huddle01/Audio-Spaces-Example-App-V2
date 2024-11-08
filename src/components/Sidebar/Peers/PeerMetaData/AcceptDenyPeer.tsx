@@ -4,14 +4,13 @@ import { getFallbackAvatar } from '@/utils/helpers';
 import { useRemotePeer } from '@huddle01/react/hooks';
 import { Role } from '@huddle01/server-sdk/auth';
 import Image from 'next/image';
-import { FC } from 'react';
+import type { FC } from 'react';
 
 interface AcceptDenyPeerProps {
   peerId: string;
 }
 
 const AcceptDenyPeer: FC<AcceptDenyPeerProps> = ({ peerId }) => {
-
   const { metadata, updateRole } = useRemotePeer<{
     displayName: string;
     avatarUrl: string;

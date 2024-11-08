@@ -1,17 +1,14 @@
-import Image from "next/image";
-import { usePeerIds, useRemotePeer } from "@huddle01/react/hooks";
-import useStore from "@/store/slices";
-import { Role } from "@huddle01/server-sdk/auth";
-import { getFallbackAvatar } from "@/utils/helpers";
+import Image from 'next/image';
+import { usePeerIds, useRemotePeer } from '@huddle01/react/hooks';
+import useStore from '@/store/slices';
+import { Role } from '@huddle01/server-sdk/auth';
+import { getFallbackAvatar } from '@/utils/helpers';
 
 type AcceptRequestProps = {
   peerId: string;
 };
 
-const AcceptRequest: React.FC<AcceptRequestProps> = ({
-  peerId,
-}) => {
-
+const AcceptRequest: React.FC<AcceptRequestProps> = ({ peerId }) => {
   const { metadata, updateRole } = useRemotePeer<{
     displayName: string;
     avatarUrl: string;

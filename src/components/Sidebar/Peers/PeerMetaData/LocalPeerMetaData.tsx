@@ -6,10 +6,7 @@ import HostData from '../PeerRole/HostData';
 import CoHostData from '../PeerRole/CoHostData';
 import SpeakerData from '../PeerRole/SpeakerData';
 import ListenersData from '../PeerRole/ListenersData';
-import {
-  useLocalAudio,
-  useLocalPeer,
-} from '@huddle01/react/hooks';
+import { useLocalAudio, useLocalPeer } from '@huddle01/react/hooks';
 import useStore from '@/store/slices';
 import { Role } from '@huddle01/server-sdk/auth';
 import { memo } from 'react';
@@ -46,7 +43,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
   const removeRequestedPeers = useStore((state) => state.removeRequestedPeers);
 
   return (
-    <div className={cn(className, "flex items-center justify-between w-full")}>
+    <div className={cn(className, 'flex items-center justify-between w-full')}>
       <div className="flex items-center gap-2">
         <Image
           src={metadata?.avatarUrl ?? getFallbackAvatar()}
@@ -69,7 +66,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
             }
           }}
           onAccept={() => {
-            if (peerId && role && ["host", "coHost"].includes(role)) {
+            if (peerId && role && ['host', 'coHost'].includes(role)) {
               updateRole({ role: Role.SPEAKER });
               removeRequestedPeers(peerId);
             }
@@ -81,7 +78,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
             onClick={() => {
               // if (peerId === localPeerId) {
               updateMetadata({
-                displayName: metadata?.displayName ?? "Guest",
+                displayName: metadata?.displayName ?? 'Guest',
                 avatarUrl: metadata?.avatarUrl ?? getFallbackAvatar(),
                 isHandRaised: !metadata?.isHandRaised,
               });
@@ -94,7 +91,7 @@ const PeerMetaData: React.FC<PeerMetaDatProps> = ({
           </button>
           <button
             onClick={() => {
-              if (role && ["host", "coHost", "speaker"].includes(role)) {
+              if (role && ['host', 'coHost', 'speaker'].includes(role)) {
                 isAudioOn ? disableAudio() : enableAudio();
               }
             }}

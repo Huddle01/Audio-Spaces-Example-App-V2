@@ -1,6 +1,6 @@
 import { BasicIcons } from '@/assets/BasicIcons';
 import { cn } from '@/utils/helpers';
-import React from 'react';
+import type React from 'react';
 import { useDataMessage, useLocalPeer } from '@huddle01/react/hooks';
 import useStore from '@/store/slices';
 
@@ -84,7 +84,7 @@ const EmojiTray: React.FC<Props> = ({ onClick, onClose }) => {
           }}
           className={cn(
             ' w-full text-sm text-slate-100 py-2 rounded-lg font-inter flex items-center justify-center font-medium',
-            metadata?.isHandRaised ? 'bg-custom-1' : 'bg-custom-8'
+            metadata?.isHandRaised ? 'bg-custom-1' : 'bg-custom-8',
           )}
         >
           ✋ {metadata?.isHandRaised ? 'Lower Hand' : 'Raise Hand'}

@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 // Utils
-import { cn } from "@/utils/helpers";
+import { cn } from '@/utils/helpers';
 
 // Assets
-import { PeerListIcons } from "@/assets/PeerListIcons";
+import { PeerListIcons } from '@/assets/PeerListIcons';
 
 type PeerListProps = {
   count?: number | string;
@@ -19,7 +19,6 @@ const PeerList: React.FC<PeerListProps> = ({
   title,
   count,
 }) => {
-
   return (
     <div className={cn(className)}>
       <div className="h-full overflow-y-auto flex gap-4 items-center">

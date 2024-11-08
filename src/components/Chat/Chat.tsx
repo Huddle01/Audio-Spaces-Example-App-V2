@@ -1,15 +1,16 @@
-"use client";
-import React, { useId } from "react";
-import useChatScroll from "./ChatScroll";
-import useStore from "@/store/slices";
-import { useState, useRef } from "react";
-import { BasicIcons } from "@/assets/BasicIcons";
-import { useDataMessage } from "@huddle01/react/hooks";
-import Header from "../Sidebar/Header/Header";
+'use client';
+import type React from 'react';
+import { useId } from 'react';
+import useChatScroll from './ChatScroll';
+import useStore from '@/store/slices';
+import { useState, useRef } from 'react';
+import { BasicIcons } from '@/assets/BasicIcons';
+import { useDataMessage } from '@huddle01/react/hooks';
+import Header from '../Sidebar/Header/Header';
 
 const Chat = () => {
   const userDisplayName = useStore((state) => state.userDisplayName);
-  const [message, setMessage] = useState<string>("");
+  const [message, setMessage] = useState<string>('');
   const addChatMessage = useStore((state) => state.addChatMessage);
   const chatMessages = useStore((state) => state.chatMessages);
   const ref = useChatScroll(chatMessages);
@@ -25,11 +26,11 @@ const Chat = () => {
       is_user: true,
     };
     addChatMessage(newChatMessage);
-    setMessage("");
+    setMessage('');
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       buttonRef.current?.click();
     }
   };
@@ -40,9 +41,9 @@ const Chat = () => {
 
   const sendDataToAllPeers = () => {
     sendData({
-      to: "*",
+      to: '*',
       payload: JSON.stringify({ message: message, name: userDisplayName }),
-      label: "chat",
+      label: 'chat',
     });
   };
 
@@ -52,8 +53,8 @@ const Chat = () => {
         key={index}
         className={`${
           chat.is_user
-            ? "ml-auto text-md break-words max-w-xs w-fit py-1 px-4 mb-2 bg-[#216CFC] rounded-2xl items-center flex"
-            : "w-fit py-1 px-4 break-words max-w-xs text-md mb-2 rounded-lg bg-[#343744]"
+            ? 'ml-auto text-md break-words max-w-xs w-fit py-1 px-4 mb-2 bg-[#216CFC] rounded-2xl items-center flex'
+            : 'w-fit py-1 px-4 break-words max-w-xs text-md mb-2 rounded-lg bg-[#343744]'
         }`}
       >
         <div className="text-xs text-blue-300">

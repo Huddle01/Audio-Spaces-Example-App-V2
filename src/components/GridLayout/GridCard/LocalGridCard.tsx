@@ -1,13 +1,13 @@
-import React, { FC, useState } from "react";
-import Image from "next/image";
+import React, { type FC, useState } from 'react';
+import Image from 'next/image';
 
 // Assets
-import { BasicIcons } from "@/assets/BasicIcons";
-import { useDataMessage, useLocalPeer } from "@huddle01/react/hooks";
-import { getFallbackAvatar } from "@/utils/helpers";
+import { BasicIcons } from '@/assets/BasicIcons';
+import { useDataMessage, useLocalPeer } from '@huddle01/react/hooks';
+import { getFallbackAvatar } from '@/utils/helpers';
 
 const LocalGridCard: FC = () => {
-  const [reaction, setReaction] = useState("");
+  const [reaction, setReaction] = useState('');
 
   const {
     metadata,
@@ -22,10 +22,10 @@ const LocalGridCard: FC = () => {
   useDataMessage({
     onMessage(payload, from, label) {
       if (from === localPeerId) {
-        if (label === "reaction") {
+        if (label === 'reaction') {
           setReaction(payload);
           setTimeout(() => {
-            setReaction("");
+            setReaction('');
           }, 5000);
         }
       }
@@ -53,7 +53,7 @@ const LocalGridCard: FC = () => {
       <div className="absolute left-1/2 bottom-1/2 -translate-x-1/2 mb-2 text-4xl">
         {reaction}
       </div>
-      {role && ["host, coHost, speaker"].includes(role) && (
+      {role && ['host, coHost, speaker'].includes(role) && (
         <div className="absolute right-0">{BasicIcons.audio}</div>
       )}
       {metadata?.isHandRaised && (

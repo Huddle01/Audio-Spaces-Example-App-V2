@@ -1,7 +1,7 @@
-import React from "react";
-import Strip from "./Strip";
-import { useLocalPeer, useRemotePeer, useRoom } from "@huddle01/react/hooks";
-import { Role } from "@huddle01/server-sdk/auth";
+import type React from 'react';
+import Strip from './Strip';
+import { useLocalPeer, useRemotePeer, useRoom } from '@huddle01/react/hooks';
+import { Role } from '@huddle01/server-sdk/auth';
 
 type SpeakerDataProps = {
   peerId: string;
@@ -14,7 +14,7 @@ const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
 
   return (
     <>
-      {me.role === "host" && (
+      {me.role === 'host' && (
         <>
           <Strip
             type="personSpeaker"
@@ -34,7 +34,7 @@ const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
           />
         </>
       )}
-      {me.role && ["host", "coHost"].includes(me.role) && (
+      {me.role && ['host', 'coHost'].includes(me.role) && (
         <>
           <Strip
             type="remove"
@@ -51,7 +51,7 @@ const Speaker: React.FC<SpeakerDataProps> = ({ peerId }) => {
         </>
       )}
 
-      {me.role === "speaker" && (
+      {me.role === 'speaker' && (
         <>
           <Strip
             type="leave"

@@ -1,6 +1,6 @@
 import { useLocalPeer, usePeerIds } from '@huddle01/react/hooks';
 import { Role } from '@huddle01/server-sdk/auth';
-import { FC, memo } from 'react';
+import { type FC, memo } from 'react';
 import RemotePeerMetaData from '../PeerMetaData/RemotePeerMetaData';
 import LocalPeerMetaData from '../PeerMetaData/LocalPeerMetaData';
 
@@ -9,10 +9,7 @@ interface HostsListProps {
   isRequested?: boolean;
 }
 
-const HostsList: FC<HostsListProps> = ({
-  className,
-  isRequested
-}) => {
+const HostsList: FC<HostsListProps> = ({ className, isRequested }) => {
   const { peerIds } = usePeerIds({ roles: [Role.HOST] });
   const { peerId: localPeerId, role: localPeerRole } = useLocalPeer();
 

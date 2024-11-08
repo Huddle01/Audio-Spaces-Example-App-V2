@@ -66,7 +66,7 @@ const GridCard: React.FC<GridCardProps> = ({ peerId }) => {
       <div className="absolute left-1/2 bottom-1/2 -translate-x-1/2 mb-2 text-4xl">
         {reaction}
       </div>
-      {role && ["host, coHost, speaker"].includes(role) && (
+      {role && ['host, coHost, speaker'].includes(role) && (
         <div className="absolute right-0">{BasicIcons.audio}</div>
       )}
       {metadata?.isHandRaised && (

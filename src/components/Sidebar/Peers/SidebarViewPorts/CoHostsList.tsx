@@ -1,8 +1,8 @@
-import { useLocalPeer, usePeerIds } from "@huddle01/react/hooks";
-import { Role } from "@huddle01/server-sdk/auth";
-import { FC } from "react";
-import RemotePeerMetaData from "../PeerMetaData/RemotePeerMetaData";
-import LocalPeerMetaData from "../PeerMetaData/LocalPeerMetaData";
+import { useLocalPeer, usePeerIds } from '@huddle01/react/hooks';
+import { Role } from '@huddle01/server-sdk/auth';
+import type { FC } from 'react';
+import RemotePeerMetaData from '../PeerMetaData/RemotePeerMetaData';
+import LocalPeerMetaData from '../PeerMetaData/LocalPeerMetaData';
 
 interface CoHostsListProps {
   className?: string;
